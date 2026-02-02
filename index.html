@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ur">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hassan's Calculator- Scientific Calculator</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a0a1a 50%, #0a0a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 20, 147, 0.15) 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.15) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: pulse 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.15;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.25;
+            }
+        }
+
+        .calculator-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .calculator {
+            background: rgba(20, 20, 20, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ff1493, #ff69b4, #da70d6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 20, 147, 0.3);
+        }
+
+        .display-container {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .expression {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+            min-height: 24px;
+            word-wrap: break-word;
+            word-break: break-all;
+            overflow-wrap: break-word;
+            font-weight: 300;
+            line-height: 1.3;
+        }
+
+        .display {
+            color: #ffffff;
+            font-size: 36px;
+            text-align: right;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            word-break: break-all;
+            overflow-wrap: break-word;
+            line-height: 1.2;
+            max-width: 100%;
+        }
+
+        .love-quote {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            border-radius: 20px;
+            padding: 20px 25px;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            box-shadow:
+                0 10px 40px rgba(255, 20, 147, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+            z-index: 10;
+            line-height: 1.6;
+        }
+
+        .love-quote::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 20, 147, 0.1), rgba(138, 43, 226, 0.1));
+            border-radius: 20px;
+            z-index: -1;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .love-quote::before {
+            content: '💕';
+            display: block;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(30, 30, 30, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #ff1493, #da70d6);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 20px rgba(255, 20, 147, 0.3);
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .buttons-grid.scientific {
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(40, 40, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 20, 147, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .operator {
+            background: linear-gradient(135deg, rgba(255, 20, 147, 0.3), rgba(138, 43, 226, 0.3));
+            border-color: rgba(255, 20, 147, 0.4);
+        }
+
+        .operator:hover {
+            background: linear-gradient(135deg, rgba(255, 20, 147, 0.5), rgba(138, 43, 226, 0.5));
+        }
+
+        .function {
+            background: rgba(60, 30, 80, 0.5);
+            font-size: 14px;
+            padding: 15px 8px;
+        }
+
+        .function:hover {
+            background: rgba(80, 40, 100, 0.7);
+        }
+
+        .equals {
+            background: linear-gradient(135deg, #ff1493, #da70d6);
+            font-size: 24px;
+            font-weight: 600;
+            box-shadow: 0 6px 25px rgba(255, 20, 147, 0.4);
+        }
+
+        .equals:hover {
+            box-shadow: 0 8px 35px rgba(255, 20, 147, 0.6);
+        }
+
+        .clear {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.6), rgba(178, 34, 34, 0.6));
+        }
+
+        .clear:hover {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.8), rgba(178, 34, 34, 0.8));
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .display {
+                font-size: 24px;
+                letter-spacing: 0.5px;
+            }
+
+            .expression {
+                font-size: 14px;
+            }
+
+            button {
+                padding: 16px;
+                font-size: 16px;
+            }
+
+            .buttons-grid.scientific {
+                gap: 8px;
+            }
+
+            .function {
+                font-size: 12px;
+                padding: 12px 6px;
+            }
+
+            .love-quote {
+                font-size: 13px;
+                padding: 15px 20px;
+                bottom: -75px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            button {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .function {
+                font-size: 11px;
+                padding: 10px 4px;
+            }
+
+            .display {
+                font-size: 20px;
+                letter-spacing: 0px;
+            }
+
+            .expression {
+                font-size: 12px;
+            }
+
+            .love-quote {
+                font-size: 12px;
+                padding: 12px 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator-container">
+        <div class="calculator">
+            <h1 class="title">Hassan's Calculator 💕</h1>
+
+            <div class="display-container">
+                <div class="expression" id="expression"></div>
+                <div class="display" id="display">0</div>
+            </div>
+
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="setMode('basic')">Basic</button>
+                <button class="mode-btn" onclick="setMode('scientific')">Scientific</button>
+            </div>
+
+            <div class="buttons-grid" id="buttonsGrid">
+                <!-- Buttons will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="love-quote" id="loveQuote" style="display: none;"></div>
+    </div>
+
+    <script>
+        const loveQuotes = {
+            '0': "Moti",
+            '1': "Pasandida Aurat",
+            '2': "Mohtarma",
+            '3': "Madam G",
+            '4': "Butterfly",
+            '5': "Meri Jan",
+            '6': "Fiza",
+            '7': "Hassan",
+            '8': "Khuchupuchu",
+            '9': "My Love"
+        };
+
+        let currentMode = 'basic';
+        let displayValue = '0';
+        let expression = '';
+        let waitingForOperand = false;
+        let lastQuoteNum = null;
+
+        const basicButtons = [
+            { text: 'C', class: 'clear', action: 'clear' },
+            { text: '←', class: 'operator', action: 'backspace' },
+            { text: '%', class: 'operator', action: 'operator' },
+            { text: '÷', class: 'operator', action: 'operator' },
+            { text: '7', class: 'number', action: 'number' },
+            { text: '8', class: 'number', action: 'number' },
+            { text: '9', class: 'number', action: 'number' },
+            { text: '×', class: 'operator', action: 'operator' },
+            { text: '4', class: 'number', action: 'number' },
+            { text: '5', class: 'number', action: 'number' },
+            { text: '6', class: 'number', action: 'number' },
+            { text: '−', class: 'operator', action: 'operator' },
+            { text: '1', class: 'number', action: 'number' },
+            { text: '2', class: 'number', action: 'number' },
+            { text: '3', class: 'number', action: 'number' },
+            { text: '+', class: 'operator', action: 'operator' },
+            { text: '0', class: 'number span-2', action: 'number' },
+            { text: '.', class: 'operator', action: 'decimal' },
+            { text: '=', class: 'equals', action: 'equals' }
+        ];
+
+        const scientificButtons = [
+            { text: 'C', class: 'clear', action: 'clear' },
+            { text: '←', class: 'operator', action: 'backspace' },
+            { text: '(', class: 'operator', action: 'operator' },
+            { text: ')', class: 'operator', action: 'operator' },
+            { text: '%', class: 'operator', action: 'operator' },
+
+            { text: 'sin', class: 'function', action: 'function' },
+            { text: 'cos', class: 'function', action: 'function' },
+            { text: 'tan', class: 'function', action: 'function' },
+            { text: 'ln', class: 'function', action: 'function' },
+            { text: 'log', class: 'function', action: 'function' },
+
+            { text: 'π', class: 'operator', action: 'constant' },
+            { text: 'e', class: 'operator', action: 'constant' },
+            { text: 'x²', class: 'function', action: 'function' },
+            { text: '√', class: 'function', action: 'function' },
+            { text: 'xʸ', class: 'function', action: 'function' },
+
+            { text: '7', class: 'number', action: 'number' },
+            { text: '8', class: 'number', action: 'number' },
+            { text: '9', class: 'number', action: 'number' },
+            { text: '÷', class: 'operator', action: 'operator' },
+            { text: 'DEG', class: 'operator', action: 'degree' },
+
+            { text: '4', class: 'number', action: 'number' },
+            { text: '5', class: 'number', action: 'number' },
+            { text: '6', class: 'number', action: 'number' },
+            { text: '×', class: 'operator', action: 'operator' },
+            { text: '1/x', class: 'function', action: 'function' },
+
+            { text: '1', class: 'number', action: 'number' },
+            { text: '2', class: 'number', action: 'number' },
+            { text: '3', class: 'number', action: 'number' },
+            { text: '−', class: 'operator', action: 'operator' },
+            { text: 'n!', class: 'function', action: 'function' },
+
+            { text: '0', class: 'number', action: 'number' },
+            { text: '.', class: 'operator', action: 'decimal' },
+            { text: 'EXP', class: 'function', action: 'function' },
+            { text: '+', class: 'operator', action: 'operator' },
+            { text: '=', class: 'equals', action: 'equals' }
+        ];
+
+        let isDegree = true;
+
+        function setMode(mode) {
+            currentMode = mode;
+            const buttons = document.querySelectorAll('.mode-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const grid = document.getElementById('buttonsGrid');
+            grid.className = mode === 'scientific' ? 'buttons-grid scientific' : 'buttons-grid';
+
+            renderButtons();
+            clear();
+        }
+
+        function renderButtons() {
+            const buttons = currentMode === 'scientific' ? scientificButtons : basicButtons;
+            const grid = document.getElementById('buttonsGrid');
+            grid.innerHTML = '';
+
+            buttons.forEach(btn => {
+                const button = document.createElement('button');
+                button.textContent = btn.text;
+                button.className = btn.class;
+                button.onclick = () => handleButton(btn.text, btn.action);
+                grid.appendChild(button);
+            });
+        }
+
+        function handleButton(text, action) {
+            switch (action) {
+                case 'number':
+                    inputNumber(text);
+                    showLoveQuote(text);
+                    break;
+                case 'operator':
+                    inputOperator(text);
+                    break;
+                case 'decimal':
+                    inputDecimal();
+                    break;
+                case 'clear':
+                    clear();
+                    break;
+                case 'backspace':
+                    backspace();
+                    break;
+                case 'equals':
+                    calculate();
+                    break;
+                case 'function':
+                    handleFunction(text);
+                    break;
+                case 'constant':
+                    inputConstant(text);
+                    break;
+                case 'degree':
+                    toggleDegree();
+                    break;
+            }
+        }
+
+        function inputNumber(num) {
+            if (waitingForOperand) {
+                displayValue = String(num);
+                waitingForOperand = false;
+            } else {
+                displayValue = displayValue === '0' ? String(num) : displayValue + num;
+            }
+            updateDisplay();
+        }
+
+        function inputOperator(op) {
+            const operators = {
+                '÷': '/',
+                '×': '*',
+                '−': '-',
+                '+': '+',
+                '%': '%',
+                '(': '(',
+                ')': ')'
+            };
+
+            if (op === '(' || op === ')') {
+                expression += op;
+            } else {
+                if (!waitingForOperand && displayValue !== '0') {
+                    expression += displayValue + ' ' + op + ' ';
+                    waitingForOperand = true;
+                }
+            }
+            updateDisplay();
+        }
+
+        function inputDecimal() {
+            if (waitingForOperand) {
+                displayValue = '0.';
+                waitingForOperand = false;
+            } else if (displayValue.indexOf('.') === -1) {
+                displayValue += '.';
+            }
+            updateDisplay();
+        }
+
+        function inputConstant(constant) {
+            if (constant === 'π') {
+                displayValue = String(Math.PI);
+            } else if (constant === 'e') {
+                displayValue = String(Math.E);
+            }
+            waitingForOperand = true;
+            updateDisplay();
+        }
+
+        function handleFunction(func) {
+            const value = parseFloat(displayValue);
+            let result;
+
+            switch (func) {
+                case 'sin':
+                    result = isDegree ? Math.sin(value * Math.PI / 180) : Math.sin(value);
+                    break;
+                case 'cos':
+                    result = isDegree ? Math.cos(value * Math.PI / 180) : Math.cos(value);
+                    break;
+                case 'tan':
+                    result = isDegree ? Math.tan(value * Math.PI / 180) : Math.tan(value);
+                    break;
+                case 'ln':
+                    result = Math.log(value);
+                    break;
+                case 'log':
+                    result = Math.log10(value);
+                    break;
+                case 'x²':
+                    result = Math.pow(value, 2);
+                    break;
+                case '√':
+                    result = Math.sqrt(value);
+                    break;
+                case 'xʸ':
+                    expression += displayValue + '^';
+                    waitingForOperand = true;
+                    updateDisplay();
+                    return;
+                case '1/x':
+                    result = 1 / value;
+                    break;
+                case 'n!':
+                    result = factorial(Math.floor(value));
+                    break;
+                case 'EXP':
+                    expression += displayValue + 'e';
+                    waitingForOperand = true;
+                    updateDisplay();
+                    return;
+            }
+
+            displayValue = String(result);
+            waitingForOperand = true;
+            updateDisplay();
+        }
+
+        function factorial(n) {
+            if (n < 0) return NaN;
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        function toggleDegree() {
+            isDegree = !isDegree;
+            event.target.textContent = isDegree ? 'DEG' : 'RAD';
+        }
+
+        function calculate() {
+            try {
+                let fullExpression = expression + displayValue;
+                fullExpression = fullExpression.replace(/\^/g, '**');
+                fullExpression = fullExpression.replace(/e([0-9]+)/g, '*10**$1');
+
+                const result = eval(fullExpression);
+                displayValue = String(result);
+                expression = '';
+                waitingForOperand = true;
+                updateDisplay();
+            } catch (error) {
+                displayValue = 'Error';
+                expression = '';
+                updateDisplay();
+            }
+        }
+
+        function clear() {
+            displayValue = '0';
+            expression = '';
+            waitingForOperand = false;
+            updateDisplay();
+            hideLoveQuote();
+        }
+
+        function backspace() {
+            if (displayValue.length > 1) {
+                displayValue = displayValue.slice(0, -1);
+            } else {
+                displayValue = '0';
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('display').textContent = displayValue;
+            document.getElementById('expression').textContent = expression;
+        }
+
+        function showLoveQuote(num) {
+            const quote = loveQuotes[num];
+            if (quote && lastQuoteNum !== num) {
+                const quoteDiv = document.getElementById('loveQuote');
+                quoteDiv.textContent = quote;
+                quoteDiv.style.display = 'block';
+                quoteDiv.style.animation = 'none';
+                setTimeout(() => {
+                    quoteDiv.style.animation = 'fadeInUp 0.5s ease-out forwards';
+                }, 10);
+
+                lastQuoteNum = num;
+
+                setTimeout(() => {
+                    hideLoveQuote();
+                }, 3000);
+            }
+        }
+
+        function hideLoveQuote() {
+            const quoteDiv = document.getElementById('loveQuote');
+            quoteDiv.style.opacity = '0';
+            setTimeout(() => {
+                quoteDiv.style.display = 'none';
+                quoteDiv.style.opacity = '1';
+            }, 300);
+            lastQuoteNum = null;
+        }
+
+        // Initialize
+        renderButtons();
+    </script>
+</body>
+
+</html>
